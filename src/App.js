@@ -13,7 +13,7 @@ class App extends Component {
     };
   }
 
-  serialNumber = "12344235";
+  serialNumber = 12344235;
   password = "";
   buttonCombination = [];
   timeoutID = null;
@@ -24,6 +24,24 @@ class App extends Component {
     ["*","0","L"],
   ];
 
+  masterUnlock(secretKey) {
+    return new Promise((resolve,reject) => {
+      let api = "https://9w4qucosgf.execute-api.eu-central-1.amazonaws.com/default/CR-JS_team_M02a?code=" + secretKey;
+      console.log(api);
+      fetch(api,{
+        // mode: 'no-cors',
+      })
+        .then(data => {
+          console.log(data);
+          resolve(data);
+        })
+        .catch(error => {
+          console.log(error);
+          reject();
+        });
+    });
+  }
+
   pressButton(value) {
     if(this.isInputBlocked()) {
       return;
@@ -32,13 +50,33 @@ class App extends Component {
       this.lock();
       return;
     }
-    this.setState({statusMessage: ""});
+    if(!(this.state.statusMessage === "Service")){
+      this.setState({statusMessage: ""});
+    }
     this.buttonCombination.push(value);
     clearTimeout(this.timeoutID);
     this.timeoutID = setTimeout(() => {this.submitCombination()},1000);
   }
 
-  submitCombination() {
+  async submitCombination() {
+    if(this.state.statusMessage === "Service"){
+      let secretKey = this.buttonCombination.join('');
+      this.setState({statusMessage: "Validating"});
+      try{
+        let response = await this.masterUnlock(secretKey);
+        if(response.sn === this.serialNumber){
+          this.unlock(true);
+        }
+        else{
+          this.setState({statusMessage: "Error"});
+        }
+      }
+      catch(e){
+        this.setState({statusMessage: "Error"});
+      }
+      this.buttonCombination = [];
+      return;
+    }
     if(!this.state.locked){
       if(this.buttonCombination.length < 6){ // Submited password has invalid length
         this.setState({statusMessage: "Error"});
@@ -56,13 +94,17 @@ class App extends Component {
       this.buttonCombination = [];
     }
     if(this.state.locked){
-      console.log(this.buttonCombination);
       let triedPassword = this.buttonCombination.join('');
       if(triedPassword === this.password){
-        this.unlock();
+        this.unlock(false);
       }
       else{
-        this.setState({statusMessage: "Error"});
+        if(triedPassword === "000000"){
+          this.setState({statusMessage: "Service"});
+        }
+        else{
+          this.setState({statusMessage: "Error"});
+        }
       }
       this.buttonCombination = [];
     }
@@ -73,24 +115,37 @@ class App extends Component {
     setTimeout(() => {this.finishMechanicalProcess()},3000);
   }
 
-  unlock() {
+  unlock(isMasterUnlock) {
     this.setState({statusMessage: "Unlocking"});
-    setTimeout(() => {this.finishMechanicalProcess()},3000);
+    setTimeout(() => {this.finishMechanicalProcess(isMasterUnlock)},3000);
   }
 
-  finishMechanicalProcess() {
-    this.setState({statusMessage: ""});
+  finishMechanicalProcess(isMasterUnlock) {
+    if(this.state.locked){
+      if(isMasterUnlock){
+        this.setState({statusMessage: ""});
+      }
+      else{
+        this.setState({statusMessage: "Ready"});
+      }
+    }
+    else{
+      this.setState({statusMessage: ""});
+    }
     this.setState({locked: !this.state.locked});
   }
 
   isInputBlocked() {
-    if(this.buttonCombination.length > 5) {
+    if(this.buttonCombination.length > 5 && !this.state.statusMessage === "Service") {
       return true;
     }
     if(this.state.statusMessage === "Locking") {
       return true;
     }
     if(this.state.statusMessage === "Unlocking") {
+      return true;
+    }
+    if(this.state.statusMessage === "Validating") {
       return true;
     }
     return false;
@@ -118,6 +173,9 @@ class App extends Component {
               )})
             }
           </div>
+          <div className={`${bootstrap.serialNumberStyle}`}>
+            <small>S/N: {this.serialNumber}</small>
+          </div>
         </div>
       </div>
     );
@@ -131,6 +189,7 @@ const bootstrap = {
   statusMessageStyle: "mb-0 mr-1 align-self-end h1",
   buttonRowStyle: "d-flex flex-row",
   buttonStyle: "d-flex justify-content-center align-items-center m-2",
+  serialNumberStyle: "align-self-end mr-1",
 }
 
 export default App;
