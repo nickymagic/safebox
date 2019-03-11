@@ -5,12 +5,83 @@ import Bootstrap from './utils/Bootstrap';
 import RobotoMono from './utils/RobotoMono';
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      locked: false,
+      statusMessage: "",
+    };
+  }
+
+  password = "";
+  buttonCombination = [];
+  timeoutID = null;
   buttonRows = [
     ["7","8","9"],
     ["4","5","6"],
     ["1","2","3"],
     ["*","0","L"],
   ];
+
+
+
+  pressButton(value) {
+    if(this.isInputBlocked()) {
+      return;
+    }
+    if(value === "L" && this.state.statusMessage === "Ready") {
+      this.lock();
+      return;
+    }
+    this.setState({statusMessage: ""});
+    this.buttonCombination.push(value);
+    clearTimeout(this.timeoutID);
+    this.timeoutID = setTimeout(() => {this.submitCombination()},1000);
+  }
+
+  submitCombination() {
+    if(!this.state.locked){
+      console.log(this.buttonCombination);
+      if(this.buttonCombination.length < 6){ // Submited password has invalid length
+        this.setState({statusMessage: "Error"});
+      }
+      else{ // Submited password has valid length
+        this.password = this.buttonCombination.join('');
+        if(isNaN(this.password)){ // Submited password has non digits
+          console.log("Invalid pass");
+          this.setState({statusMessage: "Error"});
+        }
+        else{ // Submited password is valid
+          this.setState({statusMessage: "Ready"});
+        }
+      }
+      this.buttonCombination = [];
+    }
+  }
+
+  lock() {
+    this.setState({statusMessage: "Locking..."});
+    setTimeout(() => {this.finishMechanicalProcess()},3000);
+  }
+
+  finishMechanicalProcess() {
+    this.setState({statusMessage: ""});
+    this.setState({locked: !this.state.locked});
+  }
+
+  isInputBlocked() {
+    if(this.buttonCombination.length > 5) {
+      return true;
+    }
+    if(this.state.statusMessage === "Locking...") {
+      return true;
+    }
+    if(this.state.statusMessage === "Unlocking...") {
+      return true;
+    }
+    return false;
+  }
+
   render() {
     return (
       <div className={`${bootstrap.windowStyle}`}>
@@ -18,8 +89,8 @@ class App extends Component {
         <Bootstrap/>
         <div className={`cPanelBox ${bootstrap.cPanelBoxStyle}`}>
           <div className={`screenBox ${bootstrap.screenBoxStyle}`}>
-            <p>Unlocked</p>
-            <p className={`${bootstrap.statusMessageStyle}`}>Ready</p>
+            <p>{this.state.locked ? "Locked" : "Unlocked"}</p>
+            <p className={`${bootstrap.statusMessageStyle}`}>{this.state.statusMessage}</p>
           </div>
           <div>
             {
@@ -27,7 +98,7 @@ class App extends Component {
                 return (
                   <div className={`${bootstrap.buttonRowStyle}`}>
                     {row.map(btn => {
-                      return <div className={`button ${bootstrap.buttonStyle}`}>{btn}</div>
+                      return <div className={`button ${bootstrap.buttonStyle}`} onClick={() => {this.pressButton(btn)}}>{btn}</div>
                     })}
                   </div>
               )})
