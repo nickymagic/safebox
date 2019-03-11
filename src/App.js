@@ -13,6 +13,7 @@ class App extends Component {
     };
   }
 
+  serialNumber = "12344235";
   password = "";
   buttonCombination = [];
   timeoutID = null;
@@ -22,8 +23,6 @@ class App extends Component {
     ["1","2","3"],
     ["*","0","L"],
   ];
-
-
 
   pressButton(value) {
     if(this.isInputBlocked()) {
@@ -41,7 +40,6 @@ class App extends Component {
 
   submitCombination() {
     if(!this.state.locked){
-      console.log(this.buttonCombination);
       if(this.buttonCombination.length < 6){ // Submited password has invalid length
         this.setState({statusMessage: "Error"});
       }
@@ -57,10 +55,26 @@ class App extends Component {
       }
       this.buttonCombination = [];
     }
+    if(this.state.locked){
+      console.log(this.buttonCombination);
+      let triedPassword = this.buttonCombination.join('');
+      if(triedPassword === this.password){
+        this.unlock();
+      }
+      else{
+        this.setState({statusMessage: "Error"});
+      }
+      this.buttonCombination = [];
+    }
   }
 
   lock() {
-    this.setState({statusMessage: "Locking..."});
+    this.setState({statusMessage: "Locking"});
+    setTimeout(() => {this.finishMechanicalProcess()},3000);
+  }
+
+  unlock() {
+    this.setState({statusMessage: "Unlocking"});
     setTimeout(() => {this.finishMechanicalProcess()},3000);
   }
 
@@ -73,10 +87,10 @@ class App extends Component {
     if(this.buttonCombination.length > 5) {
       return true;
     }
-    if(this.state.statusMessage === "Locking...") {
+    if(this.state.statusMessage === "Locking") {
       return true;
     }
-    if(this.state.statusMessage === "Unlocking...") {
+    if(this.state.statusMessage === "Unlocking") {
       return true;
     }
     return false;
