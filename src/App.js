@@ -29,10 +29,13 @@ class App extends Component {
       let api = "https://9w4qucosgf.execute-api.eu-central-1.amazonaws.com/default/CR-JS_team_M02a?code=" + secretKey;
       console.log(api);
       fetch(api,{
-        // mode: 'no-cors',
+        method: "GET",
+        headers : {
+          'Content-Type': 'application/json',
+        },
       })
+        .then(response => response.json())
         .then(data => {
-          console.log(data);
           resolve(data);
         })
         .catch(error => {
@@ -149,6 +152,10 @@ class App extends Component {
       return true;
     }
     return false;
+  }
+
+  onKeyPressed(e) {
+    console.log(e.key);
   }
 
   render() {
