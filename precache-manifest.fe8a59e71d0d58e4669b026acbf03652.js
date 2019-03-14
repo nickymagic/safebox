@@ -4,19 +4,19 @@ self.__precacheManifest = [
     "url": "/safebox/static/js/runtime~main.1f7b49be.js"
   },
   {
-    "revision": "a8441ab0bda76adf4f47",
-    "url": "/safebox/static/js/main.4eb31659.chunk.js"
+    "revision": "3b2fdf18d0ee733c8c5f",
+    "url": "/safebox/static/js/main.6bd99ecd.chunk.js"
   },
   {
     "revision": "5d38434d1bbecf474fa5",
     "url": "/safebox/static/js/2.eb7024da.chunk.js"
   },
   {
-    "revision": "a8441ab0bda76adf4f47",
+    "revision": "3b2fdf18d0ee733c8c5f",
     "url": "/safebox/static/css/main.e94ea30e.chunk.css"
   },
   {
-    "revision": "ab5d477667ef732250894140717371a4",
+    "revision": "764a107182f43a96d2127023702d6909",
     "url": "/safebox/index.html"
   }
 ];

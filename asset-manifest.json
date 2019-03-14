@@ -1,13 +1,13 @@
 {
   "main.css": "/safebox/static/css/main.e94ea30e.chunk.css",
-  "main.js": "/safebox/static/js/main.4eb31659.chunk.js",
-  "main.js.map": "/safebox/static/js/main.4eb31659.chunk.js.map",
+  "main.js": "/safebox/static/js/main.6bd99ecd.chunk.js",
+  "main.js.map": "/safebox/static/js/main.6bd99ecd.chunk.js.map",
   "runtime~main.js": "/safebox/static/js/runtime~main.1f7b49be.js",
   "runtime~main.js.map": "/safebox/static/js/runtime~main.1f7b49be.js.map",
   "static/js/2.eb7024da.chunk.js": "/safebox/static/js/2.eb7024da.chunk.js",
   "static/js/2.eb7024da.chunk.js.map": "/safebox/static/js/2.eb7024da.chunk.js.map",
   "index.html": "/safebox/index.html",
-  "precache-manifest.765bc918b9209e91a7c9b16465a85f09.js": "/safebox/precache-manifest.765bc918b9209e91a7c9b16465a85f09.js",
+  "precache-manifest.fe8a59e71d0d58e4669b026acbf03652.js": "/safebox/precache-manifest.fe8a59e71d0d58e4669b026acbf03652.js",
   "service-worker.js": "/safebox/service-worker.js",
   "static/css/main.e94ea30e.chunk.css.map": "/safebox/static/css/main.e94ea30e.chunk.css.map"
 }
